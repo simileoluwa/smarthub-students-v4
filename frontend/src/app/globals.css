@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Smart Student Hub v4 — Core Variables & Styling Tokens
+   ========================================================================== */
+:root {
+  --font-heading: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', Courier, monospace;
+
+  /* True Black Dark Mode Theme (60-30-10 Rule) */
+  --background: #0A0A0A;
+  --surface: #1A1A1A;
+  --border: #333333;
+  --text: #FFFFFF;
+  --text-secondary: #A3A3A3;
+  
+  --accent: #3B82F6;
+  --primary: #6366F1;
+  --cta: #10B981;
+  --cta-hover: #059669;
+  
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light Theme Mode */
+:root.light-mode {
+  --background: #FFFFFF;
+  --surface: #F8FAFC;
+  --border: #E2E8F0;
+  --text: #1E293B;
+  --text-secondary: #64748B;
+  --accent: #F59E0B;
+  --primary: #6366F1;
+  --cta: #10B981;
+  --cta-hover: #059669;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: var(--font-body);
+  transition: background-color var(--duration-normal) var(--easing-standard), 
+              color var(--duration-normal) var(--easing-standard);
+  overflow-x: hidden;
+}
+
+/* Standardized Focus Indicator (Accessibility Rule) */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 12px var(--primary) !important;
+}
+
+/* Prefers Reduced Motion Respect */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Premium Interface Elements & Animations
+   ========================================================================== */
+
+/* Reading Scroll Progress */
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--cta));
+  z-index: 1000;
+  transition: width 100ms linear;
+}
+
+/* Active Border Beam CTA Button */
+.beam-btn {
+  position: relative;
+  background: #000000;
+  color: #FFFFFF;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.beam-btn::before {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.4), transparent);
+  transform: translateX(-150px);
+}
+
+.beam-btn:hover::before {
+  animation: beam-anim 1.5s infinite linear;
+}
+
+@keyframes beam-anim {
+  0% { transform: translateX(-150px); }
+  100% { transform: translateX(200px); }
+}
+
+/* Premium Card Lifts & Hover States */
+.feature-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--duration-normal) var(--easing-standard),
+              border-color var(--duration-normal) var(--easing-standard),
+              box-shadow var(--duration-normal) var(--easing-standard);
+}
+
+.feature-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 2px var(--primary);
+}
+
+.light-mode .feature-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 0 2px var(--primary);
+}
+
+.feature-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), var(--cta), transparent);
+  transform: scaleX(0);
+  transition: transform var(--duration-normal) var(--easing-standard);
+  transform-origin: left;
+}
+
+.feature-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* Content Hydration Skeleton Shimmers */
+.shimmer-element {
+  position: relative;
+  overflow: hidden;
+  background-color: #262626;
+  border-radius: 6px;
+}
+.light-mode .shimmer-element {
+  background-color: #E2E8F0;
+}
+
+.shimmer-element::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transform: translateX(-100%);
+  animation: shimmer-anim 1.5s infinite ease-in-out;
+}
+.light-mode .shimmer-element::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+}
+
+@keyframes shimmer-anim {
+  100% { transform: translateX(100%); }
+}
+
+/* Staggered Entrance on Scroll */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+}
+
+.reveal-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
