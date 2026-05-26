@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { db } from '../lib/db';
 
 // Testimonials Data
 const TESTIMONIALS = [
@@ -25,6 +27,7 @@ const TESTIMONIALS = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [isLightMode, setIsLightMode] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isModalActive, setIsModalActive] = useState(false);
@@ -136,10 +139,42 @@ export default function Home() {
     setCurrentSlide((prev) => (prev === 0 ? TESTIMONIALS.length - 1 : prev - 1));
   };
 
-  const handleOnboardingSubmit = (e: React.FormEvent) => {
+  const handleOnboardingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: persist profile to IndexedDB via Dexie
+    
+    const profileId = crypto.randomUUID?.() || Math.random().toString(36).substring(2);
+    const profileData = {
+      id: profileId,
+      email: 'guest@smarthub.io',
+      fullName,
+      universityName: university,
+      gradingScale: gradingScale as any,
+      currentLevel: 100,
+      strikeModeActive: false,
+      localCreatedAt: new Date().toISOString(),
+      localUpdatedAt: new Date().toISOString(),
+      syncStatus: 'pending_insert' as const,
+      clientVersion: 1
+    };
+
+    // Save to localStorage for synchronous header/greetings reading
+    localStorage.setItem('smarthub_profile', JSON.stringify({
+      id: profileId,
+      fullName,
+      university,
+      gradingScale,
+      onboardedAt: new Date().toISOString()
+    }));
+
+    try {
+      // Save to Dexie IndexedDB
+      await db.profiles.put(profileData);
+    } catch (err) {
+      console.warn("Could not save to Dexie database, using localStorage fallback:", err);
+    }
+
     closeModal();
+    router.push('/dashboard');
   };
 
   return (
@@ -411,7 +446,7 @@ export default function Home() {
           </button>
           
           <h2 className="modal-title text-3xl font-extrabold mb-4 text-white" id="modalTitleId">Get Started Today</h2>
-          <p className="modal-desc text-sm text-[#A3A3A3] mb-8" id="modalDescId">Initialize your local offline sandbox. Enter your academic parameters below to seed your dashboard.</p>
+          <p className="modal-desc text-sm text-[#A3A3A3] mb-8" id="modalDescId">Initialize your local offline workspace. Enter your academic parameters below to construct your dashboard.</p>
           
           <form id="onboardingForm" onSubmit={handleOnboardingSubmit}>
             <div className="form-group flex flex-col gap-2 mb-6">
@@ -457,7 +492,7 @@ export default function Home() {
               </select>
             </div>
 
-            <button className="modal-submit-btn bg-[#10B981] hover:bg-[#059669] text-white font-bold py-3.5 rounded-md cursor-pointer w-full min-h-[44px] mt-4" type="submit">Seed Sandbox</button>
+            <button className="modal-submit-btn bg-[#10B981] hover:bg-[#059669] text-white font-bold py-3.5 rounded-md cursor-pointer w-full min-h-[44px] mt-4" type="submit">Initialize Workspace</button>
           </form>
         </div>
       </div>
