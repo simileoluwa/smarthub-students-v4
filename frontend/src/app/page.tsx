@@ -138,7 +138,7 @@ export default function Home() {
 
   const handleOnboardingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Sandbox environment initialized successfully!\nStudent: ${fullName}\nUniversity: ${university}\nGrading Scale: ${gradingScale}\n\nReady for Stage 7.`);
+    // TODO: persist profile to IndexedDB via Dexie
     closeModal();
   };
 
