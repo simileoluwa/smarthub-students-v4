@@ -258,9 +258,9 @@ export default function CGPAPage() {
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div className="flex items-center gap-3">
           <Link 
-            href="/"
+            href="/dashboard"
             className="p-2 border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors hover:bg-[var(--surface)] focus-visible:outline-none"
-            aria-label="Back to home"
+            aria-label="Back to dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
